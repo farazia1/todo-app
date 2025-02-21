@@ -1,76 +1,71 @@
 "use client";
 
-
-
-
 import { useRef, useState } from "react";
-import { FaTrash } from "react-icons/fa"; // Trash icon import
+import { FaTrash } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; // Import Toastify CSS
+import "react-toastify/dist/ReactToastify.css";
 import { nanoid } from "nanoid";
 
 function Home() {
-  const [tasks, settasks] = useState<{ title: string; id: string }[]>([]);
-  const inputRefrence = useRef<HTMLInputElement>(null);
+  const [tasks, setTasks] = useState<{ title: string; id: string }[]>([]);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-
-  const addtask = () => {
-    if (inputRefrence.current) {
-      const inputvalue = inputRefrence.current.value.trim();
-
-      if (!inputvalue) {
-        toast.error("Task cannot be empty!"); // 🛑 Empty task error
+  const addTask = () => {
+    if (inputRef.current) {
+      const inputValue = inputRef.current.value.trim();
+      if (!inputValue) {
+        toast.error("Task cannot be empty!");
         return;
       }
-
-      settasks([{ title: inputvalue, id: nanoid() }, ...tasks]);
-      toast.success("Task added successfully! ✅"); // ✅ Success message
-      inputRefrence.current.value = "";
+      setTasks([{ title: inputValue, id: nanoid() }, ...tasks]);
+      toast.success("Task added successfully!");
+      inputRef.current.value = "";
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      addtask();
+      addTask();
     }
   };
 
-  const deletetask = (id: string) => {
-    settasks(tasks.filter((task) => task.id !== id));
-    toast.info("Task deleted 🗑️"); // ℹ️ Deletion message
+  const deleteTask = (id: string) => {
+    setTasks(tasks.filter((task) => task.id !== id));
+    toast.info("Task deleted");
   };
 
-
-      
-
   return (
-    <div className="p-4">
-      {/* Toast Notification Container (Outside the Button) */}
+    <div className="min-h-screen flex flex-col items-center bg-gradient-to-b from-gray-900 via-gray-800 to-black text-white p-6">
       <ToastContainer position="top-center" autoClose={3000} />
-
-      <input
-        ref={inputRefrence}
-        onChange={(e) => {
-          console.log(e.target.value || "no value");
-        }}
-        type="text"
-        onKeyDown={handleKeyDown}
-        placeholder="Enter text here"
-        className="border-2 border-gray-700 w-[80%] flex mx-auto rounded px-3 py-2"
-      />
       
-      <button
-        onClick={addtask}
-        className="border-2 border-black bg-gray-300 mt-4 flex w-[70%] justify-center mx-auto p-2"
-      >
-        Add Task
-      </button>
+      <h1 className="text-4xl font-extrabold mb-6 bg-gradient-to-r from-gray-400 via-gray-200 to-gray-400 bg-clip-text text-transparent">🚀 Todo App</h1>
 
-      <ul className="mt-4">
-        {tasks.map((elem) => (
-          <li key={elem.id} className="flex justify-between w-64 bg-gray-100 p-2 rounded">
-            {elem.title}
-            <button onClick={() => deletetask(elem.id)} className="text-red-500">
+      <div className="flex w-full max-w-lg mb-6">
+        <input
+          ref={inputRef}
+          onKeyDown={handleKeyDown}
+          placeholder="Enter your task..."
+          className="flex-grow border border-gray-600 bg-gray-700 text-white rounded-l px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-500 shadow-md"
+        />
+        <button
+          onClick={addTask}
+          className="bg-gradient-to-r from-gray-600 to-gray-400 hover:from-gray-500 hover:to-gray-300 px-5 py-3 rounded-r text-white font-semibold shadow-lg transition-all"
+        >
+          Add
+        </button>
+      </div>
+
+      <ul className="w-full max-w-lg space-y-3">
+        {tasks.map((task) => (
+          <li
+            key={task.id}
+            className="flex justify-between items-center bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800 p-4 rounded-lg shadow-lg hover:shadow-xl transition"
+          >
+            <span className="text-gray-200 font-medium">{task.title}</span>
+            <button
+              onClick={() => deleteTask(task.id)}
+              className="text-red-400 hover:text-red-500 transition"
+            >
               <FaTrash />
             </button>
           </li>
